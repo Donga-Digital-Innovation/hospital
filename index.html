@@ -355,7 +355,7 @@
         const text =  target.options[target.selectedIndex].text;
 
         const xhr = new XMLHttpRequest();
-        const url = 'http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire'; /*URL*/
+        const url = 'https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire'; /*URL*/
         let queryParams = '?' + encodeURIComponent('serviceKey') + '='+'t%2FgbeR9lf0CZXSorz5rzLkt9dWXAPLweTEHfFcHZKtkzj2ytxA9gRDeISfNLd7ITtyGoAznf%2Bc%2FxS8UEy6yzLQ%3D%3D'; /*Service Key*/
         queryParams += '&' + encodeURIComponent('STAGE1') + '=' + encodeURIComponent('서울'); /**/
         queryParams += '&' + encodeURIComponent('STAGE2') + '=' + encodeURIComponent(text); /**/
