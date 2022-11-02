@@ -12,6 +12,14 @@
             align-items: center;
             gap: 30px;
         }
+        
+        .info{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+        }
 
         .select{
             width: 120px;
@@ -21,6 +29,12 @@
         .input{
             width: 50px;
             height: 30px;
+        }
+
+        ul,li{
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
@@ -51,27 +65,76 @@
             <option value=''>선택하세요</option>
         </select>
     </form>
-
+    
+    <p>응급실 가용 병상 정보 현황</p>
+    <div class="info">
+    </div>
 </body>
 <script>
-    const city = document.querySelector(".input");
+    Array.prototype.division = function(n){
+        let arr = this;
+        let len = arr.length;
+        let cnt = Math.floor(len/n);
+        let tmp = [];
 
+        for(let i =0; i<cnt; i++){
+            tmp.push(arr.splice(0, n))
+        }
+
+        return tmp;
+    }
+
+    const $city = document.querySelector(".input");
+    const $info = document.querySelector('.info')
+    
     const showValue = (target) => {
+        $info.textContent = ''
         const text =  target.options[target.selectedIndex].text;
 
         const xhr = new XMLHttpRequest();
         const url = 'https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire'; /*URL*/
-
+        
         let queryParams = '?' + encodeURIComponent('serviceKey') + '='+'t%2FgbeR9lf0CZXSorz5rzLkt9dWXAPLweTEHfFcHZKtkzj2ytxA9gRDeISfNLd7ITtyGoAznf%2Bc%2FxS8UEy6yzLQ%3D%3D'; /*Service Key*/
-        queryParams += '&' + encodeURIComponent('STAGE1') + '=' + encodeURIComponent(city.options[city.selectedIndex].text); /**/
+        queryParams += '&' + encodeURIComponent('STAGE1') + '=' + encodeURIComponent($city.options[$city.selectedIndex].text); /**/
         queryParams += '&' + encodeURIComponent('STAGE2') + '=' + encodeURIComponent(text); /**/
         queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent(1); /**/
         queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent(10); /**/
         xhr.open('GET', url + queryParams);
         xhr.onreadystatechange = function () {
-            console.log(this.responseText.replace(/<[^>]*>?/g, ' '));
-            if (this.readyState == 4) {
-                alert('가용 가능 병상: '+this.responseText);
+            let list = this.responseText.replace(/<[^>]*>?/g, ' ').split("  ").filter((v) => v !== "").slice(2, -4).division(30);
+            if (this.readyState == 4 && list.length !== 0) {
+                list.map((v, index) => {
+                    const item = document.createElement('ul');
+                    item.setAttribute("class", `item${index}`);
+                    $info.append(item);
+
+                    const $itemlist = document.querySelector(`.item${index}`);
+                    const detail0 = document.createElement('li');
+                    detail0.append(`병원명: ${v[0]}`)
+                    $itemlist.append(detail0)
+
+                    const detail1 = document.createElement('li');
+                    detail1.append(`응급실 전화: ${v[1]}`)
+                    $itemlist.append(detail1)
+
+                    const detail2 = document.createElement('li');
+                    detail2.append(`기관 코드: ${v[2]}`)
+                    $itemlist.append(detail2)
+
+                    const detail3 = document.createElement('li');
+                    detail3.append(`소아 가능 여부: ${v[4]}`)
+                    $itemlist.append(detail3)
+
+                    const detail4 = document.createElement('li');
+                    detail4.append(`인큐베이터 가능 여부: ${v[5]}`)
+                    $itemlist.append(detail4)
+
+                    const detail5 = document.createElement('li');
+                    detail5.append(`응급실: ${v[20]}`)
+                    $itemlist.append(detail5)
+                })
+            } else if(list.length === 0){
+
             }
         };
     
